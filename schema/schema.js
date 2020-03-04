@@ -3,7 +3,7 @@ const { GraphQLObjectType, GraphQLString,
     GraphQLID, GraphQLInt, GraphQLSchema } = graphql;
 
 
-    var fakeUserDatabase = [
+    var users = [
         { username:"mensah", role:"user" ,password:"admin",loginAttempts:0, id:1},
         { username: "akoli", role: "user", password:"admin",loginAttempts:0,id: 2},
         { username: "admin", role: "admin",password:"admin",loginAttempts:0, id: 3 }
