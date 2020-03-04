@@ -4,9 +4,9 @@ const { GraphQLObjectType, GraphQLString,
 
 
     var fakeUserDatabase = [
-        { username:"mensah", role:"user" , id:1},
-        { username: "akoli", role: "user", id: 2},
-        { username: "admin", role: "admin", id: 3 }
+        { username:"mensah", role:"user" ,password:"admin",loginAttempts:0, id:1},
+        { username: "akoli", role: "user", password:"admin",loginAttempts:0,id: 2},
+        { username: "admin", role: "admin",password:"admin",loginAttempts:0, id: 3 }
     ]
     
     const UserType = new GraphQLObjectType({
@@ -31,7 +31,7 @@ const { GraphQLObjectType, GraphQLString,
                     //Here we define how to get data from database source
     
                     //this will return the book with id passed in argument by the user
-                    return user.find((item) => { return item.id == args.id});
+                    return users.find((item) => { return item.id == args.id});
                 }
             }
         }
