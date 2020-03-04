@@ -1,0 +1,24 @@
+{
+  "name": "grahqlaccsyscohoda",
+  "version": "1.0.0",
+  "description": "settting up GraphQL server with Nodejs, epress and Mongodb",
+  "main": "\u001b[D\u001b[D\u001b[D\u001bserver.js)",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mattisso/grahqlAccSyscOhoda.git"
+  },
+  "author": "mensah attisso <attmensah@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mattisso/grahqlAccSyscOhoda/issues"
+  },
+  "homepage": "https://github.com/Mattisso/grahqlAccSyscOhoda#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.6.0"
+  }
+}
