@@ -1,14 +1,15 @@
 const graphql = require('graphql');
+const Ocompte =require('../omodels/ocompte');
+const Oreference=require('../omodels/oreference');
 const { GraphQLObjectType, GraphQLString, 
-    GraphQLID, GraphQLInt, GraphQLSchema } = graphql;
+   GraphQLID, GraphQLInt, GraphQLSchema,GraphQLList} = graphql;
 
-
-    var users = [
+  /*   var users = [
         { username:"mensah", role:"user" ,password:"admin",loginAttempts:0, id:1},
         { username: "akoli", role: "user", password:"admin",loginAttempts:0,id: 2},
         { username: "admin", role: "admin",password:"admin",loginAttempts:0, id: 3 }
     ]
-    
+     */
     const UserType = new GraphQLObjectType({
         name: 'User',
         fields: () => ({
@@ -20,6 +21,40 @@ const { GraphQLObjectType, GraphQLString,
         })
     });
     
+
+    const OcompteType = new GraphQLObjectType({
+        name: 'Ocompte',
+        fields: () => ({
+            id: { type: GraphQLID  },
+            CompteNumber: { type: GraphQLString },
+            oreference:{
+                type: OreferenceType,
+                resolve(parent, args){
+                    return Oreference.findById(parent.ocomptID);
+                }
+            }
+           
+        })
+    });
+    
+    const OreferenceType = new GraphQLObjectType({
+        name: 'Oreference',
+        fields: () => ({
+            id: { type: GraphQLID  },
+            RefCode: { type: GraphQLString },
+            oreference:{
+                type: new GraphQLList
+            },
+            ocompte:{
+                type: OcompteType,
+                resolve(parent, args){
+                    return Ocompte.find({oreferenceID: parent.id});
+                }
+            }
+        })
+    });
+    
+
     const RootQuery = new GraphQLObjectType({
         name: 'RootQueryType',
         fields: {
