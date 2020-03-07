@@ -1,8 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = mongoose.SchemaTypes.ObjectId;
-
-
 var oReferenceSchema = new Schema(
 	{
 		RefCode:
@@ -79,6 +77,15 @@ oReferenceSchema.virtual('ocompte')
 .get(function() {
 	return this._ocompte;
 });
+
+oReferenceSchema.virtual('refcode')
+.set(function(refcode){
+	this.RefCode = refcode;
+})
+.get(function() {
+	return this.RefCode;
+});
+
 
 oReferenceSchema.pre('save',
 function (next) {
