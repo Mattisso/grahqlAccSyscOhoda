@@ -3,11 +3,13 @@
 /* eslint-disable  no-console */
 /*eslint-disable no-unused-vars */
 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+let mongoose = require('mongoose'),
+extend =require('mongoose-schema-extend'),
+AbstractEntitySchema =require('./AbstractAuditingEntity').toinit().AbstractEntitySchema;
+ let Schema = mongoose.Schema;
 
 
-const oCompteSchema = new Schema({
+let oCompteSchema = new Schema({
   CompteNumber:
     {
       type: String
@@ -15,7 +17,7 @@ const oCompteSchema = new Schema({
     oreferenceID:
     {
       type: String
-    },
+    } /*,
    CreatedOn:
     {
       type: Date,
@@ -48,11 +50,11 @@ const oCompteSchema = new Schema({
     },
     toJSON: {
       virtuals: true
-    }
+    }*/
   }
 );
-oCompteSchema.set('toObject', { getters: true });
-oCompteSchema.set('toJSON', { getters: true });
+//oCompteSchema.set('toObject', { getters: true });
+// //oCompteSchema.set('toJSON', { getters: true });
 
 oCompteSchema.index(
   {
@@ -62,7 +64,7 @@ oCompteSchema.index(
 );
 
 
-oCompteSchema.pre('save',
+/* oCompteSchema.pre('save',
   function (next) {
 
 
@@ -78,7 +80,7 @@ oCompteSchema.pre('save',
       this.ModifiedBy = 'Admin';
     next();
   }
-);
+); */
 
 const oCompte = mongoose.model('oCompte', oCompteSchema);
 
