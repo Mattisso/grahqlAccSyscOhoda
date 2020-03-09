@@ -37,7 +37,7 @@ const OcompteType = new GraphQLObjectType({
         oreference: {
             type: OreferenceType,
             resolve(parent, args) {
-                return Oreference.findById(parent.ocomptID);
+                return Oreference.findById(parent.oreferenceID);
             }
         }
 
@@ -52,12 +52,12 @@ const OreferenceType = new GraphQLObjectType({
         },
         RefCode: {
             type: GraphQLString
-        },
-        oreference: {
-            type: new GraphQLList
-        },
+        },  
+        Description: {
+            type: GraphQLString
+        },    
         ocompte: {
-            type: OcompteType,
+            type: new GraphQLList(OcompteType),
             resolve(parent, args) {
                 return Ocompte.find({
                     oreferenceID: parent.id
@@ -107,7 +107,7 @@ const RootQuery = new GraphQLObjectType({
                 //Here we define how to get data from database source
 
                 //this will return the book with id passed in argument by the user
-                return Ocompte.find(args.id);
+                return Ocompte.findById(args.id);
             }
         },
         ocomptes: {
@@ -170,31 +170,29 @@ const Mutation = new GraphQLObjectType({
             type: OcompteType,
             args: {
                 //GraphQLNonNull make these field required
-                name: { type: new GraphQLNonNull(GraphQLString) },
-                age: { type: new GraphQLNonNull(GraphQLInt) }
+                CompteNumber: { type: new GraphQLNonNull(GraphQLString) },
+                oreferenceID: { type: new GraphQLNonNull(GraphQLString) }
             },
             resolve(parent, args) {
-                let author = new Author({
-                    name: args.name,
-                    age: args.age
+                let ocompte = new Ocompte({
+                    CompteNumber: args.CompteNumber,
+                    oreferenceID: args.oreferenceID
                 });
-                return author.save();
+                return ocompte.save();
             }
         },
         addOreference:{
-            type:Oreference,
+            type:OreferenceType,
             args:{
-                name: { type: new GraphQLNonNull(GraphQLString)},
-                pages: { type: new GraphQLNonNull(GraphQLInt)},
-                authorID: { type: new GraphQLNonNull(GraphQLID)}
+                RefCode: { type: new GraphQLNonNull(GraphQLString)},
+                Description: { type: new GraphQLNonNull(GraphQLString)}
             },
             resolve(parent,args){
-                let book = new Book({
-                    name:args.name,
-                    pages:args.pages,
-                    authorID:args.authorID
+                let oreference = new Oreference({
+                    RefCode:args.RefCode,
+                    Description:args.Description                   
                 })
-                return book.save()
+                return oreference.save()
             }
         }
     }
@@ -202,5 +200,6 @@ const Mutation = new GraphQLObjectType({
 //Creating a new GraphQL Schema, with options query which defines query
 //we will allow users to use when they are making request.
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation:Mutation
 });

@@ -1,13 +1,19 @@
+"use strict"
+const dotenv= require('dotenv');
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema')
 const mongoose = require('mongoose');
 const app = express();
-mongoose.connect('mongodb://localhost:27017/graphql')
+dotenv.config({path: '.env'});
+app.set('port', (process.env.PORT || 3000));
+require('./config/ohadb').connectserver();
+
+/* mongoose.connect('mongodb://localhost:27017/graphql')
 
 mongoose.connection.once('open', () => {
     console.log('conneted to database');
-});
+}); */
 //This route will be used as an endpoint to interact with Graphql, 
 //All queries will go through this route. 
 app.use('/graphql', graphqlHTTP({
@@ -18,6 +24,6 @@ app.use('/graphql', graphqlHTTP({
     graphiql:true
 }));
 
-app.listen(3000, () => {
-    console.log('Listening on port 3000');
-}); 
+app.listen(app.get('port'), () => {
+    console.log(`listening on port  ${app.get('port')}..`);
+  });
