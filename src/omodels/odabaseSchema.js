@@ -48,18 +48,7 @@ const odabaseSchema = (function () {
         const auditbaseSchema = new Schema(getauditentity,gettoObject);
         // util.inherits(BaseSchema, Schema);
  
-    function auditsave(next) {
-        let currentDate = new Date();
-        if (!this.CreatedOn)
-            this.CreatedOn = currentDate;
-        if (!this.ModifiedOn)
-            this.ModifiedOn = currentDate;
-        if (!this.CreatedBy)
-            this.CreatedBy = 'Admin';
-        if (!this.ModifiedBy)
-            this.ModifiedBy = 'Admin';
-        next();
-    }
+
 
     const oada = function () {
         return

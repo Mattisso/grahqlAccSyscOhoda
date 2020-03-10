@@ -21,17 +21,23 @@ const auditDateSchema = (function () {
 
        
         
-        function CreatedOnPlugin(schema, options) {
-          schema.virtual('CreatedOn').
+     const auditEntityPlugin= function (schema, options) {
+         /*  schema.virtual('CreatedOn').
             get(function() { return this._CreatedOn; }).
-            set(function(v) { this._CreatedOn = v; });
+            set(function(v) { this._CreatedOn = v; }); */
           schema.pre('save', function(next) {        
-            if (!this._CreatedOn)
-            this._CreatedOn = currentDate;  
-            next();         
+            if (!this.CreatedOn)
+            this.CreatedOn = currentDate;
+        if (!this.ModifiedOn)
+            this.ModifiedOn = currentDate;
+        if (!this.CreatedBy)
+            this.CreatedBy = 'Admin';
+        if (!this.ModifiedBy)
+            this.ModifiedBy = 'Admin';
+        next();        
           });
         }; 
-
+/* 
     function ModifiedOnPlugin(schema, options) {
         schema.virtual('ModifiedOn').
           get(function() { return this._ModifiedOn; }).
@@ -47,14 +53,13 @@ const auditDateSchema = (function () {
           schema.pre('save', function(next) {
           
         });
-      };
+      }; */
   function toinit() {
     return {
-        auditEntityOnPlugin:auditEntityOnPlugin,
-        CreatedByPlugin:CreatedByPlugin,
-        CreatedOnPlugin:CreatedOnPlugin,
-        ModifiedOnPlugin:ModifiedOnPlugin,
-        ModifiedByPlugin:ModifiedByPlugin,
+       //  CreatedByPlugin:CreatedByPlugin,
+       auditEntityPlugin:auditEntityPlugin,
+      //  ModifiedOnPlugin:ModifiedOnPlugin,
+     //   ModifiedByPlugin:ModifiedByPlugin,
         auditDateschema:auditDateschema
     };
   }
