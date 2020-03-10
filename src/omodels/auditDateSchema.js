@@ -15,7 +15,7 @@ const auditDateSchema = (function () {
           self.ModifiedBy = 'Admin';
             next()
           };
-          schema.pre('save', auditDateschema)
+        return  schema.pre('save', auditDateschema)
             
           
 

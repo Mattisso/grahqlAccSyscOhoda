@@ -7,6 +7,7 @@ let mongoose = require('mongoose'),
 extend =require('mongoose-schema-extend'),
 AbstractEntitySchema =require('./AbstractAuditingEntity').toinit().AbstractEntitySchema;
  let Schema = mongoose.Schema;
+ require('../config/ohadb').connectserver();
 
 let oCompteSchema = new Schema({
   CompteNumber:
@@ -75,3 +76,11 @@ oCompteSchema.index({
 const oCompte = mongoose.model('oCompte', oCompteSchema);
 
 module.exports = oCompte;
+
+const obj={ CompteNumber: '234'}
+oCompte.create({ CompteNumber: '3456'});
+/* var small = new oCompte(obj);
+small.save(function (err) {
+  if (err) return handleError(err);
+  // saved!
+}); */ 
