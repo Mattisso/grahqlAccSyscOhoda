@@ -41,8 +41,7 @@ const AbstractAuditingEntity = (function () {
         getters: true
     });
 
-    AbstractEntitySchema.pre('save',
-        function (next) {
+    AbstractEntitySchema.pre('save',function (next) {
 
         let currentDate = new Date();
 

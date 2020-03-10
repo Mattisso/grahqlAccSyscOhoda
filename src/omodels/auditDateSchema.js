@@ -1,7 +1,8 @@
 'use strict';
 
 const auditDateSchema = (function () {
-    function auditEntityOnPlugin(schema) {
+  const currentDate = new Date();
+   // function auditEntityOnPlugin(schema) {
         let auditDateschema = function(next){
             let self = this;
             let currentDate = new Date();
@@ -13,57 +14,48 @@ const auditDateSchema = (function () {
           self.CreatedBy = 'Admin';
           if (!self.ModifiedBy)
           self.ModifiedBy = 'Admin';
-            next()
+         return    next();
           };
-        return  schema.pre('save', auditDateschema)
-            
+      //   return  schema.pre('save', auditDateschema)       
           
 
-   /*      schema.virtual('CreatedOn').
-          get(function() { return this._CreatedOn; }).
-          set(function(v) { this._CreatedOn = v; });
-
-          schema.pre('save', function(docs) {
-            if (!Array.isArray(docs)) {
-              docs = [docs];
-            }
-            const currentDate = new Date();
-            for (const doc of docs) {
-              if (!doc.CreatedOn)
-              doc.CreatedOn = currentDate;
-            }
+       
+        
+        function CreatedOnPlugin(schema, options) {
+          schema.virtual('CreatedOn').
+            get(function() { return this._CreatedOn; }).
+            set(function(v) { this._CreatedOn = v; });
+          schema.pre('save', function(next) {        
+            if (!this._CreatedOn)
+            this._CreatedOn = currentDate;  
+            next();         
           });
+        }; 
 
-        schema.post(['find', 'findOne'], function(docs) {
-          if (!Array.isArray(docs)) {
-            docs = [docs];
-          }
-          const currentDate = new Date();
-          for (const doc of docs) {
-            if (!doc.CreatedOn)
-            doc.CreatedOn = currentDate;
-          }
-        }); */
-      };
-
-   /*    function ModifiedOnPlugin(schema, options) {
+    function ModifiedOnPlugin(schema, options) {
         schema.virtual('ModifiedOn').
           get(function() { return this._ModifiedOn; }).
           set(function(v) { this._ModifiedOn = v; });      
-        schema.post(['find', 'findOne'], function(docs) {
-          if (!Array.isArray(docs)) {
-            docs = [docs];
-          }
-          const currentDate = new Date();
-          for (const doc of docs) {
-            if (!doc.ModifiedOn)
-            doc.ModifiedOn = currentDate;
-          }
+          schema.pre('save', function(next) {
+         
         });
-      }; */
+      }; 
+      function ModifiedByPlugin(schema, options) {
+        schema.virtual('ModifiedBy').
+          get(function() { return this._ModifiedBy; }).
+          set(function(v) { this._ModifiedBy = v; });        
+          schema.pre('save', function(next) {
+          
+        });
+      };
   function toinit() {
     return {
-        auditEntityOnPlugin:auditEntityOnPlugin
+        auditEntityOnPlugin:auditEntityOnPlugin,
+        CreatedByPlugin:CreatedByPlugin,
+        CreatedOnPlugin:CreatedOnPlugin,
+        ModifiedOnPlugin:ModifiedOnPlugin,
+        ModifiedByPlugin:ModifiedByPlugin,
+        auditDateschema:auditDateschema
     };
   }
 
@@ -73,6 +65,7 @@ return {
 
 
 
+// }
 }
 )();
 module.exports= {
