@@ -1,11 +1,11 @@
 let mongoose = require('mongoose'),
   Schema = mongoose.Schema;
-  const {auditbaseSchema,_toobject,extendSchema} =require('../omodels/odabaseSchema').toinit();
-  const {auditEntityOnPlugin}=require('../omodels/auditDateSchema').toinit();
+  const {auditbaseSchema,gettoObject,extendSchema} =require('../omodels/odabaseSchema').toinit();
+  const {auditEntityOnPlugin, CreatedOnPlugin}=require('../omodels/auditDateSchema').toinit();
   require('../config/ohadb').connectserver();
 
-const ocompteCschema = extendSchema(auditbaseSchema,({ CompteNumber: String,auditfield :String,
-    }),_toobject);
+const ocompteCschema = extendSchema(auditbaseSchema,({ CompteNumber: String,
+    }),gettoObject);
 
 class OcompteClass   {
    constructor(CompteNumber){
@@ -27,8 +27,13 @@ ocompteCschema.plugin(auditEntityOnPlugin);
 let  OcompteC = mongoose.model('OcompteC', ocompteCschema);
 
 // OcompteC.create({ CompteNumber: '28'});
- 
-  OcompteC.find({},function(err, data){
+const obj={ CompteNumber: '86'}
+  var small = new OcompteC(obj);
+small.save(function (err) {
+  if (err) return handleError(err);
+  // saved!
+}); 
+/*   OcompteC.find({},function(err, data){
     if(err) throw err;
     console.log(data);
-});   
+});    */
