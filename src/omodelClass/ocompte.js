@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const {auditbaseSchema,  extendSchema, auditEntityPlugin} = require('../omodels/helpers/odabaseSchema').toinit();
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema;
+const {getauditentity, gettoObject ,extendSchema, auditEntityPlugin} = require('../omodels/helpers/odabaseSchema').toinit();
 require('../config/ohadb').connectserver();
 const ocompte= (function(){
-  const ocompteCschema = extendSchema(auditbaseSchema, {CompteNumber: String});
+  const auditBaseSchema = new Schema(getauditentity,gettoObject);
+  const ocompteschema = extendSchema(auditBaseSchema, {CompteNumber: String});
   class Ocomptelass {
     constructor(CompteNumber) {
       // super(auditfield,auditfield,auditfield,auditfield)
@@ -17,18 +19,18 @@ const ocompte= (function(){
       return this;
     }
   }
-  ocompteCschema.loadClass(Ocomptelass);
-  ocompteCschema.plugin(auditEntityPlugin);
-  ocompteCschema.set('toObject', {
+  ocompteschema.loadClass(Ocomptelass);
+  ocompteschema.plugin(auditEntityPlugin);
+  ocompteschema.set('toObject', {
     getters: true
   });
-  ocompteCschema.set('toJSON', {
+  ocompteschema.set('toJSON', {
     getters: true
   });
-  ocompteCschema.index({
+  ocompteschema.index({
     CompteNumber: 1
   });
-  let Ocompte = mongoose.model('Ocompte', ocompteCschema);
+  let Ocompte = mongoose.model('Ocompte', ocompteschema);
   function toinit() {
     return {
       Ocompte: Ocompte    

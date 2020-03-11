@@ -1,8 +1,8 @@
 
 'use strict';
 // const _ = require('lodash');
-let mongoose = require('mongoose'),
-Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+//Schema = mongoose.Schema;
 // const Schema = mongoose.Schema;
 const odabaseSchema = (function () {
 const extendSchema =  function(Schema, definition, options) {
@@ -41,13 +41,16 @@ toJSON: { virtuals:true }
     next();        
         });
     };
-const auditBaseSchema = new Schema(getauditentity,gettoObject);
-const balanceSheetBaseSchema = new Schema(getbaseBalancesheet,gettoObject);
+
+
 function toinit() {
 return {
-auditBaseSchema: auditBaseSchema,
-balanceSheetBaseSchema: balanceSheetBaseSchema,
+//auditBaseSchema: auditBaseSchema,
+//balanceSheetBaseSchema: balanceSheetBaseSchema,
 extendSchema: extendSchema,
+getauditentity:getauditentity,
+getbaseBalancesheet:getbaseBalancesheet,
+gettoObject:gettoObject,
 auditEntityPlugin:auditEntityPlugin
 };
 }

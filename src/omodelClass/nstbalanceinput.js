@@ -1,41 +1,45 @@
-const mongoose = require('mongoose');
-const {auditbaseSchema,  extendSchema, auditEntityPlugin} = require('../omodels/helpers/odabaseSchema').toinit();
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema;
+const {getauditentity, gettoObject ,extendSchema, auditEntityPlugin, getbaseBalancesheet} = require('../omodels/helpers/odabaseSchema').toinit();
 const {replaceString}= require('../omodels/helpers/helpers').toinit();
-// require('../config/ohadb').connectserver();
+ require('../config/ohadb').connectserver();
+ function leftstrcomptenumber() {
+  return replaceString(this._comptenumber);
+ }
 const nstbalanceinput= (function(){
-    function leftstrcomptenumber()  {
-        return replaceString(this.NumCompte);
-      }
-  const nstbalanceinputCschema = extendSchema(auditbaseSchema, {CompteNumber: String,set: leftstrcomptenumber});
+  const balanceSheetBaseSchema = new Schema(Object.assign({},getbaseBalancesheet,getauditentity),gettoObject);
+  const nstBalanceInputSchema = extendSchema(balanceSheetBaseSchema, {CompteNumber: String});
   class nstbalanceinputClass {
     constructor(CompteNumber) {
       // super(auditfield,auditfield,auditfield,auditfield)
       this._comptenumber = CompteNumber;
     }
-    get comptenumber() {
-      return this._comptenumber;
+    get leftstrcomptenumber() {
+      return replaceString(this._comptenumber);
+    } 
+     leftstrcomptenumber()  {
+      return replaceString(this.NumCompte);
     }
-  
-    set comptenumber(CompteNumber) {
+    set leftstrcomptenumber(CompteNumber) {
       this._comptenumber = CompteNumber;
-      return this;
-    }
+      return replaceString(this._comptenumber);
+    }  
 
   }
   
 
-  nstbalanceinputCschema.loadClass(nstbalanceinputClass);
-  nstbalanceinputCschema.plugin(auditEntityPlugin);
-  nstbalanceinputCschema.set('toObject', {
+  nstBalanceInputSchema.loadClass(nstbalanceinputClass);
+  nstBalanceInputSchema.plugin(auditEntityPlugin);
+  nstBalanceInputSchema.set('toObject', {
     getters: true
   });
-  nstbalanceinputCschema.set('toJSON', {
+  nstBalanceInputSchema.set('toJSON', {
     getters: true
   });
-  nstbalanceinputCschema.index({
+  nstBalanceInputSchema.index({
     CompteNumber: 1
   });
-  let nstBalanceInput = mongoose.model('nstBalanceInput', nstBalanceInputSchema);
+  const nstBalanceInput = mongoose.model('nstBalanceInput', nstBalanceInputSchema);
   function toinit() {
     return {
         nstBalanceInput: nstBalanceInput    
@@ -48,19 +52,21 @@ const nstbalanceinput= (function(){
   module.exports = {
     toinit: nstbalanceinput.toinit
     };
-const obj = {
-  CompteNumber: '2000'
+const obj ={
+  "NumCompte": "102020",
+  "IntitulCompte": "Dotation BENIN",
+  "SoldeCredit": 44829579
 }
-// nstbalanceinput.toinit().nstbalanceinputC.create(obj);
+ nstbalanceinput.toinit().nstBalanceInput.create(obj);
 // const obj={ CompteNumber: '86'}
 /*   var small = new nstbalanceinputC(obj);
 small.save(function (err) {
 if (err) return handleError(err);
 // saved!
 }); */
-nstbalanceinput.toinit().nstbalanceinputC.find({}, function (err, data) {
+ nstbalanceinput.toinit().nstBalanceInput.find({}, function (err, data) {
   if (err)
     throw err;
   console.log(data);
 });
- 
+  
