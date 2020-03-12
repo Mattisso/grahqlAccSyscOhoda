@@ -3,30 +3,13 @@ Schema = mongoose.Schema;
 const {getauditentity, gettoObject ,extendSchema, auditEntityPlugin, getbaseBalancesheet} = require('../omodels/helpers/odabaseSchema').toinit();
 const {replaceString}= require('../omodels/helpers/helpers').toinit();
  require('../config/ohadb').connectserver();
- function leftstrcomptenumber() {
-  return replaceString(this._comptenumber);
- }
+
 const nstbalanceinput= (function(){
   const balanceSheetBaseSchema = new Schema(Object.assign({},getbaseBalancesheet,getauditentity),gettoObject);
-  const nstBalanceInputSchema = extendSchema(balanceSheetBaseSchema, {CompteNumber: String});
+  const nstBalanceInputSchema = extendSchema(balanceSheetBaseSchema, {});
   class nstbalanceinputClass {
-    constructor(CompteNumber) {
-      // super(auditfield,auditfield,auditfield,auditfield)
-      this._comptenumber = CompteNumber;
-    }
-    get leftstrcomptenumber() {
-      return replaceString(this._comptenumber);
-    } 
-     leftstrcomptenumber()  {
-      return replaceString(this.NumCompte);
-    }
-    set leftstrcomptenumber(CompteNumber) {
-      this._comptenumber = CompteNumber;
-      return replaceString(this._comptenumber);
-    }  
-
+    constructor() { }
   }
-  
 
   nstBalanceInputSchema.loadClass(nstbalanceinputClass);
   nstBalanceInputSchema.plugin(auditEntityPlugin);
@@ -39,6 +22,15 @@ const nstbalanceinput= (function(){
   nstBalanceInputSchema.index({
     CompteNumber: 1
   });
+  nstBalanceInputSchema.virtual('CompteNumber')
+.get(function () {
+	return  replaceString(this.NumCompte);
+}
+).set(function (v) {
+
+  this._comptenumber =replaceString(v);
+}
+	);
   const nstBalanceInput = mongoose.model('nstBalanceInput', nstBalanceInputSchema);
   function toinit() {
     return {
@@ -53,11 +45,11 @@ const nstbalanceinput= (function(){
     toinit: nstbalanceinput.toinit
     };
 const obj ={
-  "NumCompte": "102020",
-  "IntitulCompte": "Dotation BENIN",
-  "SoldeCredit": 44829579
+  "NumCompte": "431200",
+  "IntitulCompte": "Dotation CENTRAFRIQUE",
+  "SoldeCredit": 41326938
 }
- nstbalanceinput.toinit().nstBalanceInput.create(obj);
+/*   nstbalanceinput.toinit().nstBalanceInput.create(obj); */ 
 // const obj={ CompteNumber: '86'}
 /*   var small = new nstbalanceinputC(obj);
 small.save(function (err) {
