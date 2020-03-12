@@ -17,10 +17,18 @@ const replaceString = function (comptenumber) {
     }
     return arr;
 };
+const  getFullNameById = function (model, param, callback) {
+    model.findOne({ _id: param }, {},
+      function (err, data) {
+        if (err) throw err;
+        callback(null, data);
+      });
+  };
 
 function toinit() {
     return {
-        replaceString: replaceString
+        replaceString: replaceString,
+        getFullNameById:getFullNameById
     };
 }
 
