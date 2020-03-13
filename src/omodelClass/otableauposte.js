@@ -1,122 +1,87 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = mongoose.SchemaTypes.ObjectId;
+"use strict";
+const _  =  require('lodash');
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema,
+ObjectId = mongoose.SchemaTypes.ObjectId;
+const {
+	getauditentity,
+	gettoObject,
+	extendSchema,
+	auditEntityPlugin
+} = require('../omodels/helpers/odabaseSchema').toinit();
 
-var otableauPosteSchema = new Schema(
-	{
-		/*tblRefCode:
-		{
-			type: String,
-			index: true,
-			unique: true
-		},
-		Description:
-		{
-			type: String
-    },*/
-		TableauName:
-		{
+const otableauposte =  (function ()  {
+
+	const modelObject = {
+		TableauName: {
 			type: String
 		},
-		tableauLongName:
-		{
+		tableauLongName: {
 			type: String
 		},
 		ostableaupostes: [{
-			OstableauposteKey: {
-				type: ObjectId,
-				ref: 'oStableauPoste'
+				OstableauposteKey: {
+					type: ObjectId,
+					ref: 'oStableauPoste'
+				}
+
 			}
+		]
 
+	};
+	const auditBaseSchema = new Schema(getauditentity, gettoObject);
+	const otableauPosteSchema = extendSchema(auditBaseSchema, modelObject);
+	class otableauposteClass {
+		constructor(TableauName, tableauLongName) {
+			this._TableauName = TableauName;
+			this._tableauLongName = tableauLongName;
+		}
+		get tableauname() {
+			return this._TableauName;
 		}
 
-		],
-		CreatedOn:
-		{
-			type: Date,
-			default:
-			Date.now
-		},
-		CreatedBy:
-		{
-			type: String
-		},
-		ModifiedOn:
-		{
-			type: Date,
-			default:
-			Date.now
-		},
-		ModifiedBy:
-		{
-			type: String
-		},
-		isActive:
-		{
-			type: Boolean,
-			default:
-			true
+		set tableauname(TableauName) {
+			this._TableauName = TableauName;
+			return this;
 		}
-	}, { toJSON: { virtuals: true } }
-);
+		get tableaulongname() {
+			return this._AreaLongName;
+		}
 
-otableauPosteSchema.set('toObject', { getters: true });
-otableauPosteSchema.set('toJSON', { getters: true });
+		set tableaulongname(tableauLongName) {
+			this._tableauLongName = tableauLongName;
+			return this;
+		}
+	}
 
-// a setter
-/*otableauPosteSchema.path('tableauLongName').set(function (v) {
-	return capitalize(v);
-  });*/
-
-
-  otableauPosteSchema.virtual('ostableauposte').set(function(ostableauposte){
-	this.OstableauposteKey = ostableauposte;
-	}).get(function() {
-	return this.OstableauposteKey;
+	otableauPosteSchema.set('toObject', {
+		getters: true
+	});
+	otableauPosteSchema.set('toJSON', {
+		getters: true
 	});
 
-/*
-otableauPosteSchema.virtual('fulltableauname')
-	.get(function () {
-		return this.tblRefCode + ' - ' + this.tableauLongName;
+	otableauPosteSchema.loadClass(otableauposteClass);
+	otableauPosteSchema.plugin(auditEntityPlugin);
+
+	otableauPosteSchema.virtual('ostableauposte').set(function (ostableauposte) {
+		this.OstableauposteKey = ostableauposte;
+	}).get(function () {
+		return this.OstableauposteKey;
+	});
+	let oTableauPoste = mongoose.model('oTableauPoste', otableauPosteSchema);
+	  function toinit()  {
+		    return  {
+			oTableauPoste: oTableauPoste
+			    
+		};
+		  
 	}
-	).set(function (v) {
-		this.tblRefCode = v.substr(0,
-			v.indexOf(''));
-		this.tableauLongName = v.substr(v.indexOf('') + 1);
-	}
-  );*/
-/*
-otableauPosteSchema.virtual('subtableaupostes', {
-	ref: 'oStableauPoste', // The model to use
-	localField: 'ostableaupostes', // Find people where `localField`
-	foreignField: '_id', // is equal to `foreignField`
-	// If `justOne` is true, 'members' will be a single doc as opposed to
-	// an array. `justOne` is false by default.
-	justOne: false
-});
+	return  {
+		  toinit:  toinit
+	};
 
-*/
-
-otableauPosteSchema.pre('save',
-	function (next) {
-
-
-		var currentDate = new Date();
-
-		if (!this.CreatedOn)
-			this.CreatedOn = currentDate;
-		if (!this.ModifiedOn)
-			this.ModifiedOn = currentDate;
-		if (!this.CreatedBy)
-			this.CreatedBy = 'Admin';
-		if (!this.ModifiedBy)
-			this.ModifiedBy = 'Admin';
-		next();
-	}
-);
-
-
-
-var oTableauPoste = mongoose.model('oTableauPoste', otableauPosteSchema);
-module.exports = oTableauPoste;
+})();
+module.exports =   {
+	toinit: otableauposte.toinit
+};

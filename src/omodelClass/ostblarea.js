@@ -1,113 +1,116 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = mongoose.SchemaTypes.ObjectId;
+"use strict";
+const _ = require('lodash');
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema,
+ ObjectId = mongoose.SchemaTypes.ObjectId;
+const {getauditentity, gettoObject ,extendSchema, auditEntityPlugin} = require('../omodels/helpers/odabaseSchema').toinit();
 
 
-var oStblAreaSchema = new Schema(
+const ostblarea= (function () {
+	
+const modelObject ={
+	AreaShortName:
 	{
-		AreaShortName:
-		{
-			type: String,
-			required: true,
-			unique: true
-		},
-		AreaLongName:
-		{
-			type: String
-		},
-		OstableauposteKey:
-		{
-			type: ObjectId,
-			ref: 'oStableauPoste',
-			alias: 'ostableauposte_id'
-		}
-	,
-	ocomptes: [{
-		_ocompte: {
-			type: ObjectId,
-			ref: 'oCompte',
-			alias: ''
-		}
-	}
-
-	],
-		CreatedOn:
-		{
-			type: Date,
-			default:
-			Date.now
-		},
-		CreatedBy:
-		{
-			type: String
-		},
-		ModifiedOn:
-		{
-			type: Date,
-			default:
-			Date.now
-		},
-		ModifiedBy:
-		{
-			type: String
-		},
-		isActive:
-		{
-			type: Boolean,
-			default:
-			true
-		}
-	}, { toJSON: { virtuals: true } }
-);
-oStblAreaSchema.set('toObject', { getters: true });
-oStblAreaSchema.set('toJSON', { getters: true });
-
-
-oStblAreaSchema.index({AreaShortName:1});
-
-oStblAreaSchema.virtual('suboreferences', {
-	ref: 'oReference', // The model to use
-	localField: 'oreferences', // Find people where `localField`
-	foreignField: '_id', // is equal to `foreignField`
-	// If `justOne` is true, 'members' will be a single doc as opposed to
-	// an array. `justOne` is false by default.
-	justOne: false
-  });
-
-  oStblAreaSchema.virtual('ostableauposte')
-  .set(function(ostableauposte){
-	this.OstableauposteKey = ostableauposte;
-	}).get(function() {
-	return this.OstableauposteKey;
-	});
-
-  oStblAreaSchema.virtual('ocompte')
-  .set(function(ocompte){
-    this._ocompte= ocompte;
-  })
-  .get(function() {
-    return this._ocompte;
-  });
-
-
-
-oStblAreaSchema.pre('save',
-function (next) {
-
-
-	var currentDate = new Date();
-
-	if (!this.CreatedOn)
-		this.CreatedOn = currentDate;
-	if (!this.ModifiedOn)
-		this.ModifiedOn = currentDate;
-	if (!this.CreatedBy)
-		this.CreatedBy = 'Admin';
-	if (!this.ModifiedBy)
-		this.ModifiedBy = 'Admin';
-	next();
+		type: String,
+		required: true,
+		unique: true
+	},
+	AreaLongName:
+	{
+		type: String
+	},
+ocomptes: [{
+	_ocompte: {
+		type: ObjectId,
+		ref: 'oCompte',
+		alias: ''
+	}	}
+]
 }
-);
+ 
+	const auditBaseSchema = new Schema(getauditentity,gettoObject);
+	const oStblAreaSchema = extendSchema(auditBaseSchema, modelObject);
 
-var oStblArea = mongoose.model('oStblArea', oStblAreaSchema);
-    module.exports = oStblArea;
+	class ostblareaClass {
+		constructor(AreaShortName, AreaLongName) {
+		  this._AreaShortName = AreaShortName;
+		  this._AreaLongName = AreaLongName;
+		}
+	  
+		get areashortname() {
+			return this._AreaShortName;
+		  }
+		
+		  set areashortname(AreaShortName) {
+			this._AreaShortName = AreaShortName;
+			return this;
+		  }
+		  get arealongname() {
+			return this._AreaLongName;
+		  }
+		
+		  set arealongname(AreaLongName) {
+			this._AreaLongName = AreaLongName;
+			return this;
+		  }		
+	  }
+
+	oStblAreaSchema.loadClass(ostblareaClass);
+	oStblAreaSchema.plugin(auditEntityPlugin);
+	oStblAreaSchema.set('toObject', { getters: true });
+	oStblAreaSchema.set('toJSON', { getters: true });		
+	oStblAreaSchema.index({AreaShortName:1});
+	
+	oStblAreaSchema.virtual('suboreferences', {
+		ref: 'oReference', // The model to use
+		localField: 'oreferences', // Find people where `localField`
+		foreignField: '_id', // is equal to `foreignField`
+		// If `justOne` is true, 'members' will be a single doc as opposed to
+		// an array. `justOne` is false by default.
+		justOne: false
+	  });
+	
+	 oStblAreaSchema.virtual('ocompte')
+	  .set(function(ocompte){
+		this._ocompte= ocompte;
+	  })
+	  .get(function() {
+		return this._ocompte;
+	  });
+	
+	let oStblArea = mongoose.model('oStblArea', oStblAreaSchema);
+  function toinit() {
+    return {
+	oStblArea:oStblArea
+    };
+  }
+return {
+  toinit: toinit
+};
+}
+)();
+module.exports= {
+toinit:ostblarea.toinit}; 
+
+require('../config/ohadb').connectserver();
+const obj = {
+	"AreaShortName": "AmortImmo",
+	"AreaLongName": "AmortImmo",
+	"ocomptes": [{
+		"CompteNumber": "282"
+	}]
+};
+
+// ocompte.toinit().Ocompte.create(obj);
+// const obj={ CompteNumber: '86'}
+/*   var small = new Ocompte(obj);
+small.save(function (err) {
+if (err) return handleError(err);
+// saved!
+}); */
+ostblarea.toinit().oStblArea.find({}, function (err, data) {
+	if (err)
+	  throw err;
+	console.log(data);
+  });
+   

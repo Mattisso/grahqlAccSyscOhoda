@@ -1,9 +1,13 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = mongoose.SchemaTypes.ObjectId;
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema;
+const ObjectId = mongoose.SchemaTypes.ObjectId;
+const { getauditentity, gettoObject, extendSchema, auditEntityPlugin} = require('../omodels/helpers/odabaseSchema').toinit();
 
-var oStableauPosteSchema = new Schema(
-	{
+"use strict";
+const _ = require('lodash');
+const ostableauposte= (function () {
+
+	const  modelObject = {
 		StableauName:
 		{
 			type: String,
@@ -12,7 +16,7 @@ var oStableauPosteSchema = new Schema(
 		StbleauLongName:
 		{
 			type: String
-
+	
 		},
 		OtableauposteKey:
 		{
@@ -26,45 +30,64 @@ var oStableauPosteSchema = new Schema(
 				ref: 'oStblArea'
 			}
 		}
-
-		],
-		CreatedOn:
-		{
-			type: Date,
-			default:
-				Date.now
-		},
-		CreatedBy:
-		{
-			type: String
-		},
-		ModifiedOn:
-		{
-			type: Date,
-			default:
-				Date.now
-		},
-		ModifiedBy:
-		{
-			type: String
-		},
-		isActive:
-		{
-			type: Boolean,
-			default:
-				true
+	
+		]
+	
+	}
+	const auditBaseSchema = new Schema(getauditentity, gettoObject);
+	const oStableauPosteSchema = extendSchema(auditBaseSchema, modelObject);
+	class ostableauposteClass {
+		constructor(StableauName, StbleauLongName) {
+			this._stableauName = StableauName;
+			this._stbleauLongName = StbleauLongName;
 		}
-	}, { toJSON: { virtuals: true } }
-);
+		get tableauname() {
+			return this._stableauName;
+		}
+	
+		set tableauname(StableauName) {
+			this._stableauName = StableauName;
+			return this;
+		}
+		get tableaulongname() {
+			return this._AreaLongName;
+		}
+	
+		set tableaulongname(StbleauLongName) {
+			this._stbleauLongName = StbleauLongName;
+			return this;
+		}
+	}
+	
+	
+	oStableauPosteSchema.index({ StableauName: 1 });
+	oStableauPosteSchema.loadClass(ostableauposteClass);
+	oStableauPosteSchema.plugin(auditEntityPlugin);
+	
+	oStableauPosteSchema.virtual('ostblarea').set(function (ostblarea) {
+		this.OstblareaKey = ostblarea;
+	}).get(function () {
+		return this.OstblareaKey;
+	});
+	
+	let StableauPoste = mongoose.model('oStableauPoste', oStableauPosteSchema);
+
+  function toinit() {
+    return {
+	StableauPoste:StableauPoste
+    };
+  }
+return {
+  toinit: toinit
+};
 
 
-oStableauPosteSchema.index({ StableauName: 1 });
+}
+)();
+module.exports= {
+toinit:ostableauposte.toinit
+};
 
-oStableauPosteSchema.virtual('ostblarea').set(function (ostblarea) {
-	this.OstblareaKey = ostblarea;
-}).get(function () {
-	return this.OstblareaKey;
-});
 
 /*
 	oStableauPosteSchema.virtual('subostblareas', {
@@ -76,25 +99,6 @@ oStableauPosteSchema.virtual('ostblarea').set(function (ostblarea) {
 		justOne: false
 	  });*/
 
-
-
-oStableauPosteSchema.pre('save',
-	function (next) {
-
-
-		var currentDate = new Date();
-
-		if (!this.CreatedOn)
-			this.CreatedOn = currentDate;
-		if (!this.ModifiedOn)
-			this.ModifiedOn = currentDate;
-		if (!this.CreatedBy)
-			this.CreatedBy = 'Admin';
-		if (!this.ModifiedBy)
-			this.ModifiedBy = 'Admin';
-		next();
-	}
-);
 
 
 

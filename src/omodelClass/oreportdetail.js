@@ -1,101 +1,103 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = mongoose.SchemaTypes.ObjectId;
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema;
+const ObjectId = mongoose.SchemaTypes.ObjectId;
+const { getauditentity, gettoObject, extendSchema, auditEntityPlugin} = require('../omodels/helpers/odabaseSchema').toinit();
 
-var oReportDetailSchema = new Schema({
 
-  OtableauposteKey:
-  {
-    type: ObjectId,
-    ref: 'oTableauPoste',
-    default: '000000000000000000000000'
 
-  },
-  OreferenceKey:
-  {
-    type: ObjectId,
-    ref: 'oReference',
-    default: '000000000000000000000000'
-  },
-  olevelKey:
-  {
-    type: ObjectId,
-    ref: 'olevel',
-    default: '000000000000000000000000'
-  },
-  SortOrder:
-  {
-    type: Number,
-    default: 1
-  },
+"use strict";
+const _ = require('lodash');
+const oreportdetail= (function () {
 
-  CreatedOn:
-  {
-    type: Date,
-    default:
-      Date.now
-  },
-  CreatedBy:
-  {
-    type: String
-  },
-  ModifiedOn:
-  {
-    type: Date,
-    default:
-      Date.now
-  },
-  ModifiedBy:
-  {
-    type: String
-  },
-  isActive:
-  {
-    type: Boolean,
-    default:
-      true
+  var oReportDetailSchema = {
+
+    OtableauposteKey:
+    {
+      type: ObjectId,
+      ref: 'oTableauPoste'
+  
+    },
+    OreferenceKey:
+    {
+      type: ObjectId,
+      ref: 'oReference'
+    },
+    olevelKey:
+    {
+      type: ObjectId,
+      ref: 'olevel'
+    },
+    SortOrder:
+    {
+      type: Number,
+      default: 1
+    }
   }
-}, { toJSON: { virtuals: true } }
-);
+  class otableauposteClass {
+		constructor(OtableauposteKey, tableauLongName) {
+			this._OtableauposteKey = OtableauposteKey;
+			this._tableauLongName = tableauLongName;
+		}
+		get OtableauposteKey() {
+			return this._OtableauposteKey;
+		}
 
-oReportDetailSchema.set('toObject', { getters: true });
-oReportDetailSchema.set('toJSON', { getters: true });
+		set OtableauposteKey(OtableauposteKey) {
+			this._OtableauposteKey = OtableauposteKey;
+			return this;
+		}
+		get tableaulongname() {
+			return this._AreaLongName;
+		}
 
-oReportDetailSchema.index(
-  {
-    OtableauposteKey: 1,
-    OreferenceKey: 1,
-    olevelKey: 1
-  }
-);
+		set tableaulongname(tableauLongName) {
+			this._tableauLongName = tableauLongName;
+			return this;
+		}
+	}
+  const auditBaseSchema = new Schema(getauditentity, gettoObject);
+	const oStableauPosteSchema = extendSchema(auditBaseSchema, modelObject);
+  
+  oReportDetailSchema.set('toObject', { getters: true });
+  oReportDetailSchema.set('toJSON', { getters: true });
+  
+  oReportDetailSchema.index(
+    {
+      OtableauposteKey: 1,
+      OreferenceKey: 1,
+      olevelKey: 1
+    }
+  );
+  
+  
+  
+  oReportDetailSchema.virtual('otableauposte')
+    .set(function (otableauposte) {
+      this._otableauposte = otableauposte;
+    })
+    .get(function () {
+      return this._otableauposte;
+    });
+    oStableauPosteSchema.loadClass(ostableauposteClass);
+    oStableauPosteSchema.plugin(auditEntityPlugin);
+    
+let  oReportDetail = mongoose.model('oReportDetail', oReportDetailSchema);
+  
+  function toinit() {
+    return {
+  oReportDetail:oReportDetail
+    };
+  }
+return {
+  toinit: toinit
+};
 
 
+}
+)();
+module.exports= {
+toinit:oreportdetail.toinit
+};
 
-oReportDetailSchema.virtual('otableauposte')
-  .set(function (otableauposte) {
-    this._otableauposte = otableauposte;
-  })
-  .get(function () {
-    return this._otableauposte;
-  });
-
-oReportDetailSchema.pre('save',
-  function (next) {
-
-    var currentDate = new Date();
-
-    if (!this.CreatedOn)
-      this.CreatedOn = currentDate;
-    if (!this.ModifiedOn)
-      this.ModifiedOn = currentDate;
-    if (!this.CreatedBy)
-      this.CreatedBy = 'Admin';
-    if (!this.ModifiedBy)
-      this.ModifiedBy = 'Admin';
-    next();
-  }
-);
-
-var oReportDetail = mongoose.model('oReportDetail', oReportDetailSchema);
 
 module.exports = oReportDetail;
