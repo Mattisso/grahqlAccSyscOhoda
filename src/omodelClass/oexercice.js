@@ -7,15 +7,14 @@ const oexercice= (function(){
     oExerciceEncour:{type: String },
     ExercicePrev: { type: String },
     OexercComptaKey: {type: ObjectId, ref: 'oExercCompta' },
-      OexercComptaPrevKey: { type: ObjectId, ref: 'oExercCompta'  },
-      OexercComptaEncourKey: { type: ObjectId,  ref: 'oExercCompta'  }}
+    OexercComptaPrevKey: { type: ObjectId, ref: 'oExercCompta' },
+    OexercComptaEncourKey: { type: ObjectId,  ref: 'oExercCompta' }}
 
   const auditBaseSchema = new Schema(getauditentity,gettoObject);
   const oexerciceschema = extendSchema(auditBaseSchema, modelObject);
   class oExercicelass {
     constructor(oExerciceEncour,ExercicePrev,OexercComptaKey,OexercComptaPrevKey,OexercComptaEncourKey) {
-      // super(auditfield,auditfield,auditfield,auditfield)
-      this._oexerciceEncour = oExerciceEncour
+         this._oexerciceEncour = oExerciceEncour
       this._exercicePrev = ExercicePrev,
       this._oexerccomptaKey = OexercComptaKey,
       this._oexercComptaPrevKey = OexercComptaPrevKey,
